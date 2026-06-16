@@ -10,6 +10,7 @@ use App\Notifications\NewUserRegistration;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
 {
@@ -66,7 +67,8 @@ class RegisterController extends Controller
 
         // ৪. অ্যাডমিনকে মেইল পাঠানো
         try {
-            $adminEmail = 'monoarulislam.cse@gmail.com';
+            $adminEmail = 'kwab.bd@gmail.com
+';
             Notification::route('mail', $adminEmail)->notify(new NewUserRegistration($user));
         } catch (\Exception $e) {
             Log::error("Admin Notification Failed: " . $e->getMessage());
@@ -85,4 +87,44 @@ class RegisterController extends Controller
         ];
         return $prices[$type] ?? 0;
     }
+
+
+
+    // normal register
+
+    // ১. সাধারণ রেজিস্ট্রেশন ফর্ম দেখানোর মেথড
+    public function showNormalRegistrationForm()
+    {
+        return view('auth.normal_register'); // ভিউ ফাইলের নাম
+    }
+
+    // ২. সাধারণ অ্যাকাউন্ট তৈরি করার মেথড
+    public function normalRegister(Request $request)
+    {
+        // ভ্যালিডেশন
+        $request->validate([
+            'name'    => 'required|string',
+            'address'    => 'required|string',
+            'phone'    => 'required|unique:users,phone|digits:11',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed', // পাসওয়ার্ড কনফার্মেশন ফিল্ড সহ (password_confirmation)
+        ]);
+
+        // ইউজার ডাটা সেভ করা
+        $user = User::create([
+            'name'    => $request->name,
+            'address'    => $request->address,
+            'phone'    => $request->phone,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password), // পাসওয়ার্ড হ্যাশ করা হচ্ছে
+            'status'   => 'active', // যেহেতু পেমেন্ট বা ভেরিফিকেশন নেই, তাই সরাসরি একটিভ করে দেওয়া যেতে পারে
+            'role'     => 'n_user',   // ডিফল্ট টাইপ সেট করে দেওয়া হলো
+        ]);
+
+        // অটো লগইন করাতে চাইলে নিচের লাইনটি আনকমেন্ট করতে পারেন
+        // auth()->login($user);
+
+        return redirect()->route('login')->with('success', 'অ্যাকাউন্ট তৈরি সফল হয়েছে! এখন লগইন করুন।');
+    }
+    
 }

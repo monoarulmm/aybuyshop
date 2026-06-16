@@ -74,11 +74,15 @@ Route::middleware(['auth', 'verified', AdminMiddleware::class])->prefix('admin')
 Route::get('/create-new-admin', [AdminManagementController::class, 'create'])->name('admin.create');
 Route::post('/store-new-admin', [AdminManagementController::class, 'store'])->name('admin.store');
 Route::get('/orders', [AdminManagementController::class, 'orders'])->name('admin.orders.index');
+// অর্ডার ডিটেইলস দেখার রাউট (অ্যাডমিন গ্রুপের ভেতরে রাখাই ভালো)
+Route::get('/admin/orders/{id}', [AdminManagementController::class, 'show'])->name('admin.orders.show');
 Route::put('/orders/{id}/update', [AdminManagementController::class, 'updateOrderStatus'])->name('admin.orders.update');
 // লগইন করা ইউজারদের জন্য
+
+Route::get('/product/search', [HomeController::class, 'search'])->name('shop.search');
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/watch', [HomeController::class, 'index'])->name('home');
     Route::post('/complete-task', [HomeController::class, 'completeTask'])->name('complete.task');
 
     //user profile
@@ -100,8 +104,15 @@ Route::middleware(['auth'])->group(function () {
 
 use App\Http\Controllers\Auth\RegisterController;
 
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register']);
+Route::get('/member/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/member/register', [RegisterController::class, 'register']);
+
+// সাধারণ রেজিস্ট্রেশনের রাউটসমূহ
+// সাধারণ রেজিস্ট্রেশন ফর্ম দেখার জন্য (GET)
+Route::get('/sign-up', [RegisterController::class, 'showNormalRegistrationForm'])->name('normal.register');
+
+// ডাটা সাবমিট করে অ্যাকাউন্ট তৈরি করার জন্য (POST) - বানান ঠিক করা হয়েছে
+Route::post('/sign-up', [RegisterController::class, 'normalRegister'])->name('register.normal.submit');
 
 Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetRequest']);
@@ -125,7 +136,8 @@ Route::get('password/reset/{token}', function ($token) {
 
 // --- গেস্ট রাউট (যারা লগইন করেনি তাদের জন্য) ---
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'home'])->name('welcome');
+Route::get('/watch', [HomeController::class, 'index'])->name('home');
 Route::get('/pakages', [HomeController::class, 'packages'])->name('pakages');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/privacy-policy', [HomeController::class, 'privecy'])->name('privecy');
@@ -193,6 +205,8 @@ Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/cart', [ShopController::class, 'cartIndex'])->name('cart.index');
 Route::post('/cart-add', [ShopController::class, 'addToCart'])->name('cart.add');
 Route::post('/cart-remove', [ShopController::class, 'removeFromCart'])->name('cart.remove');
+Route::post('/cart-update', [ShopController::class, 'updateCart'])->name('cart.update');
+Route::post('/cart-update-note', [ShopController::class, 'updateProductNote'])->name('cart.update-note');
 Route::middleware(['auth'])->group(function () {
     Route::get('/my-orders', [ShopController::class, 'myOrders'])->name('orders.my');
 });

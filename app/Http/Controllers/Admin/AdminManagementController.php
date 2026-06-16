@@ -53,6 +53,16 @@ class AdminManagementController extends Controller
         return view('content.admin.orders.index', compact('orders'));
     }
 
+
+    public function show($id)
+{
+    // অর্ডারের সাথে তার আইটেমসমূহ এবং আইটেমের সাথে মেইন প্রোডাক্টের রিলেশন লোড করা হচ্ছে
+    // (নিশ্চিত করুন আপনার Order মডেলে items() রিলেশন এবং OrderItem মডেলে product() রিলেশন আছে)
+    $order = \App\Models\Order::with(['items.product', 'user'])->findOrFail($id);
+
+    return view('content.admin.orders.show', compact('order'));
+}
+
     // স্ট্যাটাস আপডেট করার মেথড
     public function updateOrderStatus(Request $request, $id)
     {

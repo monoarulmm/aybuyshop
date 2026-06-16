@@ -1,131 +1,115 @@
-@extends('layouts.app') {{-- আপনার মেইন লেআউট ফাইলটির নাম এখানে দিন --}}
+@extends('layouts.app')
 
 @section('content')
-    <div class="py-10 px-4">
+    <div class="container mx-auto pt-6 pb-20 px-4 max-w-7xl w-full overflow-x-hidden">
+        
+        {{-- Header Section --}}
         <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter">
-                Choose Your <span class="text-yellow-500">Success Plan</span>
+            <h2 class="text-3xl md:text-5xl font-black text-gray-900 uppercase tracking-tight">
+                Choose Your <span class="text-indigo-600">Success Plan</span>
             </h2>
-            <p class="text-gray-400 mt-4 max-w-2xl mx-auto text-sm md:text-base">
-                আপনার পছন্দের প্যাকেজটি বেছে নিন এবং আজই আয় করা শুরু করুন। প্যাকেজ যত বড়, আয়ের সুযোগ তত বেশি!
+            <p class="text-gray-500 mt-4 max-w-2xl mx-auto text-sm md:text-base font-medium">
+                আপনার পছন্দের প্যাকেজটি বেছে নিন এবং আজই আয় করা শুরু করুন। প্যাকেজ যত বড়, আয়ের সুযোগ তত বেশি!
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+        {{-- Pricing Grid (3 Columns Layout) --}}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
 
-            <div
-                class="bg-[#161925] border border-white/5 rounded-[2.5rem] p-8 flex flex-col hover:border-white/20 transition duration-300">
+            {{-- Plan 1: Normal User --}}
+            <div class="bg-white border border-gray-100 rounded-[2.5rem] p-8 flex flex-col hover:border-gray-200 hover:shadow-[0_20px_50px_rgba(0,0,0,0.02)] transition duration-300">
                 <div class="mb-8">
-                    <h3 class="text-xl font-bold text-white mb-2">নরমাল ইউজার</h3>
-                    <div class="text-4xl font-black text-yellow-500 italic">৳ ০ <span
-                            class="text-sm text-gray-500 not-italic">/লাইফটাইম</span></div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">নরমাল ইউজার</h3>
+                    <div class="text-4xl font-black text-indigo-600">৳ ০ <span class="text-sm text-gray-400 font-bold">/লাইফটাইম</span></div>
                 </div>
+                
                 <ul class="space-y-4 mb-10 flex-1">
-                    <li class="flex items-center text-sm text-gray-300">
-                        <span class="mr-3 text-green-500">✔</span> আনলিমিটেড ভিডিও (নো কয়েন)
+                    <li class="flex items-center text-sm text-gray-600 font-medium">
+                        <span class="mr-3 text-emerald-500 font-bold text-base">✔</span> আনলিমিটেড ভিডিও (নো কয়েন)
                     </li>
-                    <li class="flex items-center text-sm text-gray-300">
-                        <span class="mr-3 text-green-500">✔</span> প্রতি টাস্ক ভিডিও: ৫ কয়েন্স
+                    <li class="flex items-center text-sm text-gray-600 font-medium">
+                        <span class="mr-3 text-emerald-500 font-bold text-base">✔</span> প্রতি টাস্ক ভিডিও: ৫ কয়েন্স
                     </li>
-                    <li class="flex items-center text-sm text-gray-500">
-                        <span class="mr-3">✖</span> নো ডেইলি ভিডিও লিমিট
+                    <li class="flex items-center text-sm text-gray-400 font-medium line-through decoration-gray-300">
+                        <span class="mr-3 text-red-400 text-base">✖</span> নো ডেইলি ভিডিও লিমিট
                     </li>
                 </ul>
-                <button
-                    class="w-full py-4 rounded-2xl border border-white/10 text-white font-bold hover:bg-white/5 transition">ডিফল্ট
-                    প্ল্যান</button>
+                
+                <button disabled class="w-full py-4 rounded-2xl border border-gray-200 text-gray-400 font-bold bg-gray-50 cursor-not-allowed text-sm">
+                    ডিফল্ট প্ল্যান
+                </button>
             </div>
 
-            <div
-                class="bg-[#161925] border border-indigo-500/30 rounded-[2.5rem] p-8 flex flex-col relative overflow-hidden group hover:scale-[1.02] transition duration-300">
-                <div
-                    class="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] font-black px-4 py-1 rounded-bl-xl uppercase tracking-widest">
-                    Popular</div>
+            {{-- Plan 2: Premium --}}
+            <div class="bg-white border border-gray-100 rounded-[2.5rem] p-8 flex flex-col hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(99,102,241,0.05)] transition duration-300">
                 <div class="mb-8">
-                    <h3 class="text-xl font-bold text-white mb-2">বেসিক প্রোফাইল</h3>
-                    <div class="text-4xl font-black text-white italic">৳ ১০০০</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">প্রিমিয়াম</h3>
+                    <div class="text-4xl font-black text-indigo-600">৳ ২০০০</div>
                 </div>
+                
                 <ul class="space-y-4 mb-10 flex-1">
-                    <li class="flex items-center text-sm text-gray-300">
-                        <span class="mr-3 text-indigo-500">✔</span> দিনে ১০টি ভিডিও
+                    <li class="flex items-center text-sm text-gray-600 font-medium">
+                        <span class="mr-3 text-indigo-500 font-bold text-base">✔</span> দিনে ২০টি ভিডিও
                     </li>
-                    <li class="flex items-center text-sm text-gray-300">
-                        <span class="mr-3 text-indigo-500">✔</span> প্রতি ভিডিও: ১০০ কয়েন্স (৫ টাকা)
+                    <li class="flex items-center text-sm text-gray-600 font-medium">
+                        <span class="mr-3 text-indigo-500 font-bold text-base">✔</span> প্রতি ভিডিও: ১০০ কয়েন্স (৫ টাকা)
                     </li>
-                    <li class="flex items-center text-sm text-gray-300">
-                        <span class="mr-3 text-indigo-500">✔</span> ডেইলি ইনকাম: ৫০ টাকা
+                    <li class="flex items-center text-sm text-gray-600 font-medium">
+                        <span class="mr-3 text-indigo-500 font-bold text-base">✔</span> ডেইলি ইনকাম: ১০০ টাকা
                     </li>
                 </ul>
-                <button
-                    class="w-full py-4 rounded-2xl bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/20 hover:bg-indigo-500 transition">আপগ্রেড
-                    করুন</button>
+                
+                <button class="w-full py-4 rounded-2xl bg-indigo-600 text-white font-bold shadow-md hover:bg-indigo-700 hover:shadow-indigo-600/10 transition text-sm">
+                    আপগ্রেড করুন
+                </button>
             </div>
 
-            <div
-                class="bg-gradient-to-b from-[#1e1b4b] to-[#161925] border border-purple-500/30 rounded-[2.5rem] p-8 flex flex-col hover:scale-[1.02] transition duration-300">
-                <div class="mb-8">
-                    <h3 class="text-xl font-bold text-white mb-2">প্রিমিয়াম</h3>
-                    <div class="text-4xl font-black text-white italic">৳ ২০০০</div>
+            {{-- Plan 3: Premium Pro (Featured / Best Value) --}}
+            <div class="bg-white border-2 border-amber-400 rounded-[2.5rem] p-8 flex flex-col relative scale-100 md:scale-105 shadow-[0_25px_60px_rgba(251,191,36,0.12)] z-10">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-amber-400 text-amber-950 text-[11px] font-black px-6 py-1.5 rounded-full uppercase tracking-wider shadow-md">
+                    Best Value
                 </div>
-                <ul class="space-y-4 mb-10 flex-1">
-                    <li class="flex items-center text-sm text-gray-300">
-                        <span class="mr-3 text-purple-500">✔</span> দিনে ২০টি ভিডিও
-                    </li>
-                    <li class="flex items-center text-sm text-gray-300">
-                        <span class="mr-3 text-purple-500">✔</span> প্রতি ভিডিও: ১০০ কয়েন্স (৫ টাকা)
-                    </li>
-                    <li class="flex items-center text-sm text-gray-300">
-                        <span class="mr-3 text-purple-500">✔</span> ডেইলি ইনকাম: ১০০ টাকা
-                    </li>
-                </ul>
-                <button
-                    class="w-full py-4 rounded-2xl bg-purple-600 text-white font-bold shadow-lg shadow-purple-600/20 hover:bg-purple-500 transition">আপগ্রেড
-                    করুন</button>
-            </div>
-
-            <div
-                class="bg-[#161925] border-2 border-yellow-500/50 rounded-[2.5rem] p-8 flex flex-col relative scale-105 shadow-[0_0_40px_rgba(234,179,8,0.1)]">
-                <div
-                    class="absolute -top-4 left-1/2 -translate-x-1/2 bg-yellow-500 text-black text-[11px] font-black px-6 py-1.5 rounded-full uppercase tracking-tighter shadow-xl">
-                    Best Value</div>
+                
                 <div class="mb-8 mt-2 text-center">
-                    <h3 class="text-xl font-bold text-white mb-2">প্রিমিয়াম প্রো</h3>
-                    <div class="text-5xl font-black text-yellow-500 italic">৳ ৫০০০</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">প্রিমিয়াম প্রো</h3>
+                    <div class="text-5xl font-black text-amber-500">৳ ৫০০০</div>
                 </div>
+                
                 <ul class="space-y-4 mb-10 flex-1">
-                    <li class="flex items-center text-sm text-gray-300">
-                        <span class="mr-3 text-yellow-500 font-bold">★</span> দিনে ৫০টি ভিডিও
+                    <li class="flex items-center text-sm text-gray-700 font-bold">
+                        <span class="mr-3 text-amber-500 text-lg">★</span> দিনে ৫০টি ভিডিও
                     </li>
-                    <li class="flex items-center text-sm text-gray-300">
-                        <span class="mr-3 text-yellow-500 font-bold">★</span> প্রতি ভিডিও: ১০০ কয়েন্স (৫ টাকা)
+                    <li class="flex items-center text-sm text-gray-700 font-bold">
+                        <span class="mr-3 text-amber-500 text-lg">★</span> প্রতি ভিডিও: ১০০ কয়েন্স (৫ টাকা)
                     </li>
-                    <li class="flex items-center text-sm text-gray-300">
-                        <span class="mr-3 text-yellow-500 font-bold">★</span> ডেইলি ইনকাম: ২৫০ টাকা
+                    <li class="flex items-center text-sm text-gray-700 font-bold">
+                        <span class="mr-3 text-amber-500 text-lg">★</span> ডেইলি ইনকাম: ২৫০ টাকা
                     </li>
-                    <li class="flex items-center text-sm text-gray-300">
-                        <span class="mr-3 text-yellow-500 font-bold">★</span> ইনস্ট্যান্ট উইথড্র সুবিধা
+                    <li class="flex items-center text-sm text-gray-700 font-bold">
+                        <span class="mr-3 text-amber-500 text-lg">★</span> ইনস্ট্যান্ট উইথড্র সুবিধা
                     </li>
                 </ul>
-                <button
-                    class="w-full py-5 rounded-2xl bg-yellow-500 text-black font-black uppercase text-xs hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] transition">প্রিমিয়াম
-                    মেম্বার হোন</button>
+                
+                <button class="w-full py-4.5 rounded-2xl bg-amber-400 hover:bg-amber-500 text-amber-950 font-black uppercase text-xs tracking-wider shadow-md transition">
+                    প্রিমিয়াম মেম্বার হোন
+                </button>
             </div>
 
         </div>
 
-        <div
-            class="mt-20 bg-white/5 border border-white/5 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+        {{-- Bottom Support Banner --}}
+        <div class="mt-20 bg-gray-50 border border-gray-100 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xs">
             <div>
-                <h4 class="text-lg font-bold text-white mb-1">প্যাকেজ নিয়ে কোনো প্রশ্ন আছে?</h4>
-                <p class="text-gray-400 text-sm">আমাদের সাপোর্ট টিম আপনার সহায়তার জন্য সবসময় প্রস্তুত।</p>
+                <h4 class="text-lg font-bold text-gray-900 mb-1">প্যাকেজ নিয়ে কোনো প্রশ্ন আছে?</h4>
+                <p class="text-gray-500 text-sm font-medium">আমাদের সাপোর্ট টিম আপনার সহায়তার জন্য সবসময় প্রস্তুত।</p>
             </div>
-            <div class="flex gap-4">
-                <a href="#"
-                    class="bg-white/10 px-6 py-3 rounded-xl text-sm font-bold hover:bg-white/20 transition">সাপোর্ট
-                    সেন্টার</a>
-                <a href="#"
-                    class="bg-indigo-600 px-6 py-3 rounded-xl text-sm font-bold hover:bg-indigo-500 transition">লাইভ
-                    চ্যাট</a>
+            <div class="flex gap-4 w-full md:w-auto">
+                <a href="#" class="flex-1 md:flex-none text-center bg-white border border-gray-200 px-6 py-3 rounded-xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition shadow-2xs">
+                    সাপোর্ট সেন্টার
+                </a>
+                <a href="#" class="flex-1 md:flex-none text-center bg-indigo-600 px-6 py-3 rounded-xl text-sm font-bold text-white hover:bg-indigo-700 transition shadow-md">
+                    লাইভ চ্যাট
+                </a>
             </div>
         </div>
     </div>

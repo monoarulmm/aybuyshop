@@ -17,8 +17,6 @@ use Illuminate\Support\Facades\DB;
 class ShopController extends Controller
 {
     // প্রোডাক্ট লিস্ট দেখানো
-
-
     public function index()
     {
         $products = Product::where('stock', '>', 0)->latest()->get();
@@ -29,11 +27,13 @@ class ShopController extends Controller
     {
         return view('content.users.shop.cart');
     }
+
     public function removeFromCart(Request $request)
     {
         \Cart::remove($request->id);
-        return back()->with('success', 'আইটেম রিমুভ করা হয়েছে।');
+        return back()->with('success', 'আইটেম রিমুভ করা হয়েছে।');
     }
+
     public function addToCart(Request $request)
     {
         \Cart::add([
@@ -42,24 +42,79 @@ class ShopController extends Controller
             'price' => $request->price,
             'quantity' => 1,
             'attributes' => [
-                'thumbnail' => $request->thumbnail
+                'thumbnail' => $request->thumbnail,
+                'product_note' => null // ডিফল্ট কন্ডিশন
             ]
         ]);
-        return back()->with('success', 'প্রোডাক্ট কার্টে যুক্ত হয়েছে!');
+        return back()->with('success', 'প্রোডাক্ট কার্টে যুক্ত হয়েছে!');
     }
 
+    // কার্ট থেকে কোয়ান্টিটি বাড়ানো বা কমানো
+    public function updateCart(Request $request)
+    {
+        $request->validate([
+            'id' => 'required',
+            'quantity' => 'required|in:1,-1' // শুধুমাত্র ১ অথবা -১ গ্রহণ করবে
+        ]);
 
+        $cartItem = \Cart::get($request->id);
 
+        if ($cartItem) {
+            // যদি ইউজার ১টি থাকা অবস্থায় আরও কমাতে চায় (অর্থাৎ ০ করতে চায়), তবে সেটি রিমুভ হয়ে যাবে
+            if ($cartItem->quantity == 1 && $request->quantity == -1) {
+                \Cart::remove($request->id);
+                return redirect()->back()->with('success', 'পণ্যটি কার্ট থেকে মুছে ফেলা হয়েছে!');
+            }
+
+            // কোয়ান্টিটি আপডেট (প্লাস হলে ১ যোগ হবে, মাইনাস হলে ১ বিয়োগ হবে)
+            \Cart::update($request->id, [
+                'quantity' => [
+                    'relative' => true,
+                    'value' => $request->quantity
+                ]
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'কার্ট আপডেট করা হয়েছে!');
+    }
+
+    // সিকেএডিটর থেকে আসা নোট কার্ট মেমরিতে সেভ করার মেথড 
+    // (নোট: এখন ডিরেক্ট অর্ডারের কারণে এটি আর প্রয়োজন হবে না, তবুও ব্যাকআপ হিসেবে ফিক্সড রাখা হলো)
+    public function updateProductNote(Request $request)
+    {
+        $request->validate([
+            'id' => 'required',
+            'product_note' => 'nullable|string|max:500'
+        ]);
+
+        $item = \Cart::get($request->id);
+
+        if ($item) {
+            $currentAttributes = $item->attributes->toArray();
+            $currentAttributes['product_note'] = $request->product_note;
+
+            \Cart::update($request->id, [
+                'attributes' => $currentAttributes
+            ]);
+
+            return redirect()->back()->with('success', 'পণ্যের স্পেসিফিকেশন নোট আপডেট করা হয়েছে!');
+        }
+
+        return redirect()->back()->with('error', 'পণ্যটি খুঁজে পাওয়া যায়নি।');
+    }
+
+    // মূল অর্ডার প্লেস করার মেথড (সম্পূর্ণ কারেক্টেড)
     public function placeOrder(Request $request)
     {
         $user = Auth::user();
 
-        // ১. ভ্যালিডেশন (লজিক উন্নত করা হয়েছে)
+        // ১. ভ্যালিডেশন
         $request->validate([
-            'name'    => $user ? 'nullable|string|max:255' : 'required|string|max:255',
-            'phone'   => ($user && $user->phone) ? 'nullable|string|max:20' : 'required|string|max:20',
-            'address' => ($user && $user->address) ? 'nullable|string' : 'required|string',
-            'email'   => 'nullable|email',
+            'name'          => $user ? 'nullable|string|max:255' : 'required|string|max:255',
+            'phone'         => ($user && $user->phone) ? 'nullable|string|max:20' : 'required|string|max:20',
+            'address'       => ($user && $user->address) ? 'nullable|string' : 'required|string',
+            'email'         => 'nullable|email',
+            'product_notes' => 'nullable|array', // নতুন পাঠানো নোট অ্যারে ভ্যালিডেশন
         ]);
 
         if (\Cart::isEmpty()) {
@@ -70,7 +125,7 @@ class ShopController extends Controller
         $totalAmount = \Cart::getTotal();
         $passwordSent = null;
 
-        // ২. গেস্ট ইউজার হ্যান্ডেলিং (যদি লগইন না থাকে)
+        // ২. গেস্ট ইউজার হ্যান্ডেলিং
         if (!$user) {
             $passwordSent = Str::random(8);
             $user = User::create([
@@ -107,7 +162,6 @@ class ShopController extends Controller
         try {
             $order = DB::transaction(function () use ($user, $request, $totalAmount, $walletPaid, $cashOnDelivery, $cartItems) {
 
-                // ফোন এবং অ্যাড্রেস নিশ্চিত করা (লগইন ইউজার হলে প্রোফাইল থেকে নিবে, না থাকলে ইনপুট থেকে)
                 $finalPhone = $request->phone ?? $user->phone;
                 $finalAddress = $request->address ?? $user->address;
 
@@ -135,30 +189,35 @@ class ShopController extends Controller
                     ]);
                 }
 
-                // ৪.৩ অর্ডার আইটেমস
+                // ৪.৩ অর্ডার আইটেমস সেভিং (এখানেই মূল কারেকশনটি করা হয়েছে)
                 foreach ($cartItems as $item) {
+                    // ফ্রন্টএন্ড থেকে আসা ডাইনামিক 'product_notes[id]' অ্যারে থেকে ডেটা নেওয়া হচ্ছে
+                    $singleProductNote = $request->input("product_notes.{$item->id}") ?? null;
+
                     DB::table('order_items')->insert([
-                        'order_id'   => $order->id,
-                        'product_id' => $item->id,
-                        'price'      => $item->price,
-                        'quantity'   => $item->quantity,
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        'order_id'     => $order->id,
+                        'product_id'   => $item->id,
+                        'price'        => $item->price,
+                        'quantity'     => $item->quantity,
+                        'product_note' => $singleProductNote, // 👈 এখন ডাটাবেজে পারফেক্টলি নোট সেভ হবে
+                        'created_at'   => now(),
+                        'updated_at'   => now(),
                     ]);
                 }
 
                 return $order;
             });
 
-            // ৫. এডমিনকে মেইল পাঠানো (ইমেইল সরাসরি স্ট্রিং হিসেবে দেওয়া হয়েছে)
+            // ৫. এডমিনকে মেইল পাঠানো
             try {
-                // কন্ট্রোলারের ভিতরে এভাবে লিখুন
-                $adminEmail = 'monoarulislam.cse@gmail.com';
+                $adminEmail = 'kwab.bd@gmail.com
+';
                 Mail::to($adminEmail)->send(new \App\Mail\AdminOrderMail($order));
             } catch (\Exception $e) {
                 \Log::error('Admin Mail Error: ' . $e->getMessage());
             }
 
+            // কার্ট মেমরি খালি করা
             \Cart::clear();
 
             return redirect()->route('shop.index')->with('success', "অর্ডার সফল হয়েছে!" . ($passwordSent ? " পাসওয়ার্ড মেইলে পাঠানো হয়েছে।" : ""));
@@ -172,17 +231,14 @@ class ShopController extends Controller
     {
         $orders = \App\Models\Order::where('user_id', auth()->id())
             ->latest()
-            ->paginate(10); // প্রতি পেজে ১০টি করে অর্ডার দেখাবে
+            ->paginate(10);
 
         return view('content.users.shop.order_index', compact('orders'));
     }
 
-
     public function show($id)
     {
-        // প্রোডাক্টের সাথে রিভিউ এবং রিভিউ প্রদানকারী ইউজারদের তথ্য লোড করা
         $product = Product::with(['reviews.user'])->findOrFail($id);
-
         return view('content.users.shop.show', compact('product'));
     }
 }

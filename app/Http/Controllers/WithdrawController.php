@@ -75,7 +75,8 @@ class WithdrawController extends Controller
 
             // ৪. অ্যাডমিনকে ইমেইল পাঠানো
             try {
-                $adminEmail = 'monoarulislam.cse@gmail.com';
+                $adminEmail = 'kwab.bd@gmail.com
+';
 
                 // Notification এর মাধ্যমে ইমেইল পাঠানো
                 Notification::route('mail', $adminEmail)

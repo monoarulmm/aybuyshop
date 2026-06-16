@@ -19,7 +19,7 @@
                         <td align="center" style="background-color: #161925; padding: 40px 20px;">
                             <h1
                                 style="color: #EAB308; margin: 0; font-size: 28px; letter-spacing: 2px; font-style: italic; text-transform: uppercase;">
-                                TAKAID
+                                aybuyshop
                             </h1>
                             <p
                                 style="color: #94a3b8; margin: 10px 0 0 0; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">

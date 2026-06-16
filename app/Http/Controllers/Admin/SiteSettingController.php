@@ -19,8 +19,8 @@ class SiteSettingController extends Controller
     {
         $request->validate([
             'site_name'    => 'required|string|max:255',
-            'logo'         => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
-            'favicon'      => 'nullable|image|mimes:png,ico,svg|max:1024',
+            'logo'         => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5048',
+            'favicon'      => 'nullable|image|mimes:png,ico,svg|max:5024',
             'main_banner'  => 'nullable|image|max:5120',
             'sponsor_banner.*' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);

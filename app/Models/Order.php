@@ -17,6 +17,13 @@ class Order extends Model
         return $this->belongsToMany(Product::class, 'order_items')
             ->withPivot('quantity', 'price');
     }
+
+
+    public function items()
+    {
+        // এখানে নিশ্চিত করুন আপনার ফরেন কি 'order_id' আছে কি না
+        return $this->hasMany(OrderItem::class, 'order_id');
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

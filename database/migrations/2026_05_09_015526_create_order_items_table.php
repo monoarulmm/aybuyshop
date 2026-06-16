@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->integer('quantity')->default(1);
-            $table->decimal('price', 10, 2); // অর্ডার করার সময় প্রোডাক্টের দাম কত ছিল
+            $table->decimal('price', 10, 2); // অর্ডার করার সময় প্রোডাক্টের দাম কত ছিল
+            $table->longText('product_note')->nullable(); // এখানে CKEditor এর কাস্টম নোট সেভ হবে
             $table->timestamps();
         });
     }

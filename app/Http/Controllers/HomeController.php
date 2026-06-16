@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Video;
+use App\Models\Product;
 use App\Models\UserEarning;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,11 @@ use Illuminate\Support\Facades\Log;
 class HomeController extends Controller
 {
 
+
+   public function home(){
+     $settings = DB::table('site_settings')->first();
+        return view('content.users.welcome', compact('settings'));
+   }
 
 
     public function index(Request $request)
@@ -70,117 +76,9 @@ class HomeController extends Controller
 
         return view('content.users.home', compact('videos', 'todayTasksCount', 'limit'));
     }
-    // public function index(Request $request)
-    // {
-    //     // ১. যারা লগইন করা নেই (Guest User) - তাদের জন্য ফিক্সড ভিডিও
-    //     // ১. গেস্ট ইউজার (লগইন ছাড়া) - ডিফল্ট কিছু ভিডিও দেখাবে (যেমন ২০টি)
-    //     if (!Auth::check()) {
-    //         $videos = Video::where('status', true)->latest()->paginate(3);
-    //         return view('content.users.home', compact('videos'));
-    //     }
 
-    //     $user = Auth::user();
-
-    //     // ২. অ্যাডমিন বা সুপার অ্যাডমিন হলে ড্যাশবোর্ডে রিডাইরেক্ট
-    //     if (in_array($user->role, ['admin', 'super_admin'])) {
-    //         return view('content.admin.dashboard');
-    //     }
-
-    //     // ৩. ইউজার টাইপ অনুযায়ী ডেইলি লিমিট সেট করা
-    //     $limit = 10; // Default for basic
-    //     if ($user->type === 'premium') {
-    //         $limit = 20;
-    //     } elseif ($user->type === 'premium_pro') {
-    //         $limit = 50;
-    //     }
-
-    //     // ৪. আজকের দেখা ভিডিওগুলোর ID সংগ্রহ
-    //     $watchedVideoIds = UserEarning::where('user_id', $user->id)
-    //         ->where('type', 'video_view')
-    //         ->whereDate('created_at', Carbon::today())
-    //         ->pluck('video_id')
-    //         ->toArray();
-
-    //     $todayTasksCount = count($watchedVideoIds);
-
-    //     // ৫. লিমিট শেষ হলে (Task Completed View)
-    //     if ($todayTasksCount >= $limit) {
-    //         return view('content.users.home', [
-    //             'videos' => new \Illuminate\Pagination\LengthAwarePaginator([], 0, 6), // খালি প্যাজিনেটর
-    //             'taskCompleted' => true,
-    //             'todayTasksCount' => $todayTasksCount,
-    //             'limit' => $limit
-    //         ]);
-    //     }
-
-    //     // ৬. আজ যা দেখা হয়নি সেগুলো রিট্রিভ করা (Pagination সহ)
-    //     // এখানে paginate(6) ব্যবহার করা হয়েছে যাতে ব্লেডে hasMorePages কাজ করে
-    //     $videos = Video::where('status', true)
-    //         ->whereNotIn('id', $watchedVideoIds)
-    //         ->latest()
-    //         ->paginate(6);
-
-    //     return view('content.users.home', compact('videos', 'todayTasksCount', 'limit'));
-    // }
-    // public function index(Request $request)
-    // {
-    //     // ১. গেস্ট ইউজার (লগইন ছাড়া) - ডিফল্ট কিছু ভিডিও দেখাবে (যেমন ২০টি)
-    //     if (!Auth::check()) {
-    //         $videos = Video::where('status', true)->latest()->take(20)->get();
-    //         return view('content.users.home', compact('videos'));
-    //     }
-
-    //     $user = Auth::user();
-
-    //     // অ্যাডমিন বা সুপার অ্যাডমিন হলে সরাসরি ড্যাশবোর্ডে রিডাইরেক্ট
-    //     if (in_array($user->role, ['admin', 'super_admin'])) {
-    //         return view('content.admin.dashboard');
-    //     }
-
-    //     // ২. ইউজার টাইপ অনুযায়ী ডেইলি লিমিট সেট করা
-    //     $limit = 10; // Basic User
-    //     if ($user->type === 'premium') {
-    //         $limit = 20;
-    //     } elseif ($user->type === 'premium_pro') {
-    //         $limit = 50;
-    //     }
-
-    //     // ৩. আজকের দেখা ভিডিওগুলোর ID সংগ্রহ (Optimized query)
-    //     $watchedVideoIds = UserEarning::where('user_id', $user->id)
-    //         ->where('type', 'video_view')
-    //         ->whereDate('created_at', now()->today())
-    //         ->pluck('video_id')
-    //         ->toArray();
-
-    //     $todayTasksCount = count($watchedVideoIds);
-
-    //     // ৪. লিমিট শেষ হয়ে গেলে "Task Completed" ভিউ দেখানো
-    //     if ($todayTasksCount >= $limit) {
-    //         return view('content.users.home', [
-    //             'videos' => collect([]),
-    //             'taskCompleted' => true,
-    //             'todayTasksCount' => $todayTasksCount,
-    //             'limit' => $limit
-    //         ]);
-    //     }
-
-    //     // ৫. আজ যা দেখা হয়নি এবং লিমিট অনুযায়ী ভিডিও রিট্রিভ করা
-    //     // এখানে paginate ব্যবহার করলে "Load More" বাটনটি সহজেই কাজ করবে
-    //     $remainingLimit = $limit - $todayTasksCount;
-
-    //     $videos = Video::where('status', true)
-    //         ->whereNotIn('id', $watchedVideoIds)
-    //         ->latest()
-    //         // যদি ডাটাবেসে অনেক ভিডিও থাকে, তবে paginate(4) বা paginate(6) দিন 
-    //         // যাতে "Load More" বাটনটি ট্রিগার করা যায়
-    //         ->paginate(6)
-    //         ->through(function ($video) use (&$remainingLimit) {
-    //             // এটি নিশ্চিত করে যে প্যাজিনেশনেও যেন মোট লিমিট অতিক্রম না করে
-    //             return $video;
-    //         });
-
-    //     return view('content.users.home', compact('videos', 'todayTasksCount', 'limit'));
-    // }
+  
+  
     public function completeTask(Request $request)
     {
         $user = Auth::user();
@@ -259,5 +157,28 @@ class HomeController extends Controller
     {
         $settings = DB::table('site_settings')->first();
         return view('content.users.about_contact', compact('settings'));
+    }
+
+
+
+
+
+
+
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+        // যদি সার্চ ইনপুট খালি না থাকে, তবে ডাটাবেজে খুঁজবে
+        $products = Product::when($query, function ($q) use ($query) {
+            return $q->where('name', 'LIKE', "%{$query}%")
+                     ->orWhere('description', 'LIKE', "%{$query}%");
+        })
+        ->latest()
+        ->get();
+
+        // আপনার শপ ইনডেক্স ব্লেড ফাইলটি রিটার্ন করবে (পার্থটি আপনার প্রজেক্ট অনুযায়ী চেক করে নিবেন)
+        return view('content.users.shop.index', compact('products', 'query'));
     }
 }

@@ -1,38 +1,58 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="min-h-screen flex items-center justify-center px-4 bg-[#0f111a]">
-        <div class="max-w-md w-full bg-[#161925] border border-white/10 p-8 rounded-[2.5rem]">
-            <div class="text-center mb-8">
-                <h2 class="text-2xl font-black text-white italic uppercase tracking-widest">New <span
-                        class="text-yellow-500">Password</span></h2>
-                <p class="text-gray-500 text-[10px] font-bold uppercase mt-2">নতুন পাসওয়ার্ড সেট করুন</p>
+    <div class="min-h-screen flex items-center justify-center px-4 py-10 bg-[#f4f6fa]">
+        <div class="max-w-md w-full">
+            <div class="bg-white border border-gray-200/80 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-[2.5rem] p-8 md:p-10 relative overflow-hidden">
+
+                <div class="absolute -top-24 -right-24 w-48 h-48 bg-yellow-500/10 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl"></div>
+
+                <div class="text-center mb-8 relative">
+                    <h2 class="text-3xl font-black text-black italic uppercase tracking-tighter">
+                        New <span class="text-yellow-600">Password</span>
+                    </h2>
+                    <p class="text-gray-500 text-[10px] font-black uppercase tracking-widest mt-2">
+                        নতুন পাসওয়ার্ড সেট করুন
+                    </p>
+                </div>
+
+                <form action="{{ route('password.reset.new') }}" method="POST" class="space-y-6 relative">
+                    @csrf
+                    
+                    <div>
+                        <label class="block text-[10px] font-black text-black uppercase tracking-widest mb-2 ml-1">
+                            New Password
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔒</span>
+                            <input type="password" name="password" required
+                                class="w-full bg-gray-50 border border-gray-200 rounded-2xl p-4 pl-12 text-black focus:bg-white focus:ring-2 focus:ring-yellow-500/50 focus:border-yellow-500 outline-none transition-all placeholder:text-gray-400 font-medium"
+                                placeholder="••••••••">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-black text-black uppercase tracking-widest mb-2 ml-1">
+                            Confirm Password
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔒</span>
+                            <input type="password" name="password_confirmation" required
+                                class="w-full bg-gray-50 border border-gray-200 rounded-2xl p-4 pl-12 text-black focus:bg-white focus:ring-2 focus:ring-yellow-500/50 focus:border-yellow-500 outline-none transition-all placeholder:text-gray-400 font-medium"
+                                placeholder="••••••••">
+                        </div>
+                        @error('password')
+                            <p class="text-red-500 text-[9px] mt-1 ml-1 font-bold uppercase">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-black text-white font-black py-5 rounded-2xl hover:bg-gray-900 hover:shadow-[0_10px_20px_rgba(0,0,0,0.15)] transition-all uppercase tracking-widest text-xs active:scale-95">
+                        Update Password
+                    </button>
+                </form>
             </div>
-
-            <form action="{{ route('password.reset.new') }}" method="POST" class="space-y-6">
-                @csrf
-                <div>
-                    <label class="text-[10px] text-gray-500 font-black uppercase ml-1">New Password</label>
-                    <input type="password" name="password" required
-                        class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white focus:ring-2 focus:ring-yellow-500 outline-none shadow-inner"
-                        placeholder="••••••••">
-                </div>
-
-                <div>
-                    <label class="text-[10px] text-gray-500 font-black uppercase ml-1">Confirm Password</label>
-                    <input type="password" name="password_confirmation" required
-                        class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white focus:ring-2 focus:ring-yellow-500 outline-none"
-                        placeholder="••••••••">
-                    @error('password')
-                        <p class="text-red-500 text-[9px] mt-1 font-bold">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <button type="submit"
-                    class="w-full bg-yellow-500 text-black font-black py-4 rounded-2xl uppercase text-xs">
-                    Update Password
-                </button>
-            </form>
         </div>
     </div>
 @endsection
